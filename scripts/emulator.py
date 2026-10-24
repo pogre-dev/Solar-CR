@@ -23,7 +23,8 @@ import os
 import subprocess
 from pathlib import Path
 
-DEFAULT_ADB = Path(r"C:\Program Files\Netease\MuMuPlayer\nx_device\15.0\shell\adb.exe")
+DEFAULT_ADB = Path(os.environ.get(
+    "HASTYCR_ADB", r"C:\Program Files\Netease\MuMuPlayer\nx_device\15.0\shell\adb.exe"))
 
 # MuMu instance 3. Override for a different machine with the env vars.
 DEFAULT_SERIAL = os.environ.get("HASTYCR_SERIAL", "127.0.0.1:16480")

@@ -7,6 +7,8 @@
 #   .\run.ps1 -Forever        run the supervisor loop: blocks of 5, reviewed
 #                             and tuned between blocks, until stopped
 #   .\run.ps1 -Stop           stop everything
+#   .\run.ps1 -Adb <adb.exe> -Serial 127.0.0.1:<port>
+#                             another emulator (or set HASTYCR_ADB / HASTYCR_SERIAL)
 #
 # Requires MuMu running with Clash Royale open. The advisor needs Ollama, which
 # is checked below rather than left to fail silently mid-match.
@@ -66,14 +68,21 @@ param(
     # one win in fifty-nine. Checkpoints under tmp\ are scratch and get
     # overwritten by whatever is training; anything meant to touch a real ladder
     # match lives under checkpoints\ with a manifest saying what it scored.
-    [string]$Checkpoint = 'checkpoints\sprint4_baseline\pilot_best_4392960.pt'
+    [string]$Checkpoint = 'checkpoints\sprint4_baseline\pilot_best_4392960.pt',
+    # Emulator connection. An explicit flag wins, then HASTYCR_ADB /
+    # HASTYCR_SERIAL, then this PC's MuMu defaults.
+    [string]$Adb = '',
+    [string]$Serial = ''
 )
 
 $ErrorActionPreference = 'Continue'
 $root   = $PSScriptRoot
 $python = Join-Path $root '.venvs\buildabot\Scripts\python.exe'
-$adb    = 'C:\Program Files\Netease\MuMuPlayer\nx_device\15.0\shell\adb.exe'
-$serial = '127.0.0.1:16480'
+if (-not $Adb)    { $Adb    = $env:HASTYCR_ADB }
+if (-not $Adb)    { $Adb    = 'C:\Program Files\Netease\MuMuPlayer\nx_device\15.0\shell\adb.exe' }
+if (-not $Serial) { $Serial = $env:HASTYCR_SERIAL }
+if (-not $Serial) { $Serial = '127.0.0.1:16480' }
+# PowerShell names are case-insensitive: $adb / $serial below are these.
 
 if ($Stop) {
     Get-CimInstance Win32_Process -Filter "Name='python.exe'" |

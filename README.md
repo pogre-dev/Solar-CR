@@ -167,7 +167,7 @@ PPO from random initialisation on a 2,321-action space explores for a very long 
 ### Step 2 — PPO
 
 ```bash
-python -m sim.train_ppo --envs 8 --steps 2000000 --init runs/clone/clone.pt \
+python -m sim.train_ppo --envs 8 --steps 2000000 --init tmp/rl/clone.pt \
     --opponent meta --brain-share 0.5 --value-warmup 300000
 ```
 
@@ -201,7 +201,7 @@ A number that looks like success on one axis was near-total failure on the other
 ### Step 3 — let it supervise itself
 
 ```bash
-python scripts/rl_supervisor.py --hours 6 --envs 8 --init runs/clone/clone.pt
+python scripts/rl_supervisor.py --hours 6 --envs 8 --init tmp/rl/clone.pt
 ```
 
 Long unattended runs fail in a way that looks identical to working: the run keeps going, the numbers keep printing, and the policy at the end is worse than the one it started from. The supervisor watches **behaviour, not loss** — hog share, plays per match, score drift — because those move long before a win rate does. On a trigger it stops, rolls back to the last verified-loadable checkpoint, tames a hyperparameter and restarts.
@@ -255,7 +255,8 @@ The same trained network drives it. Vision reads the screen, the observation is 
 | `-Brain rl\|rules` | the trained network, or the hand-written policy |
 | `-NoQueue` | never press Battle — **for a friendly 1v1**, you start the match and it plays whatever it finds itself in |
 | `-FullRes` | keep the emulator at native 1080×1920 instead of dropping to 540×960 for capture speed. Slower per decision; use it when the run is going into a video |
-| `-Vision yolo\|buildabot` | the detector trained here (0.959 mAP50), or the upstream one |
+| `-Vision yolo\|buildabot` | the detector trained here (0.959 mAP50), or the upstream one. The trained YOLO weights (`tmp/yolo/runs/*/weights/best.pt`) are not in the repo; without them use `-Vision buildabot` |
+| `-Adb <path> -Serial <host:port>` | emulator connection; defaults to MuMu at `127.0.0.1:16480`. `HASTYCR_ADB` / `HASTYCR_SERIAL` also override |
 | `-Matches N` / `-Forever` / `-Stop` | how long to run |
 
 ### The studio
