@@ -64,7 +64,6 @@ research/csv_history/
 .gemini/
 .windsurfrules
 .clinerules
-CLAUDE.md
 AGENTS.md
 
 # VOD corpus: videos are fetched, measured and deleted; tracks are the artefact
